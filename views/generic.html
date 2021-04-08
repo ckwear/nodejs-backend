@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Generic - Hyperspace by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/assets/css/main.css" />
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" />
+
+
+
+		<script type="text/javascript">
+$(function () {
+	$('#dateTimeValue').datetimepicker({ 
+		format:'DD/MM/YYYY HH:mm:ss',
+		minDate: getFormattedDate(new Date())
+	});
+
+	function getFormattedDate(date) {
+		var day = date.getDate();
+		var month = date.getMonth() + 1;
+		var year = date.getFullYear().toString().slice(2);
+		return day + '-' + month + '-' + year;
+	}
+
+
+});
+$(document).ready(function(){
+	// $("#tagNames").
+
+	$.ajax({
+		url: "/getTagNames",
+		type: "POST",
+		contentType: "application/json; charset=utf-8",
+		// headers: {
+		// 	'Authorization' : 'Basic' + btoa("admin" + ":" + "vetec2")
+		// },
+
+		success: function (result) {
+			for(index in result) {
+				$("#tagNames").append('<option>' + result[index].TagName +'</option>')
+				// alert(result[0].TagName)
+			}
+		},
+		error: function (request, status, error) {
+            alert("code:" + request.status + "\n" + "error:" + error);
+		}
+	})
+});
+$(document).on("click", "#getTagList", function(){
+	$('#maketbody').empty()
+	var chhtml = "";
+	$.ajax({
+		url: "/reqTagList",
+		type: "POST",
+		// headers: {
+		// 	'Authorization' : 'Basic' + btoa("admin" + ":" + "vetec2")
+		// },
+		dataType: "json",
+		data: {
+			tagName: $('#tagNames').val(),
+			dateTime: $('#dateTimeValue').val()
+		},
+   		// contentType: "application/json; charset=utf-8",
+		success: function (result) {
+			for (idx in result) {
+				// alert(idx)
+				var ProNodeId = result[idx].ProjNodeId
+				var TagName = result[idx].TagName
+				var DateTime = result[idx].LogDateTime
+				var MaxValue = result[idx].MaxValue
+				var AvgValue = result[idx].AvgValue
+				var MinValue = result[idx].MinValue
+				var LastValue = result[idx].LastValue
+				$('#maketbody').append('<tr>')
+				$('#maketbody').append('<td>' + ProNodeId + '</td>');
+				$('#maketbody').append('<td>' + TagName + '</td>');
+				$('#maketbody').append('<td>' + DateTime + '</td>');
+				$('#maketbody').append('<td>' + MaxValue + '</td>');
+				$('#maketbody').append('<td>' + AvgValue + '</td>');
+				$('#maketbody').append('<td>' + MinValue + '</td>');
+				$('#maketbody').append('<td>' + LastValue + '</td>');
+				$('#maketbody').append('</tr>')
+			}
+
+
+		},
+		error: function (request, status, error) {
+                alert("code:" + request.status + "\n" + "error:" + error);
+		}
+	})
+	
+});
+		</script>
+
+
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">Hyperspace</a>
+				<nav>
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="generic.html" class="active">Generic</a></li>
+						<li><a href="elements.html">Elements</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">A Generic Page</h1>
+							<p>테그명 선택</p>
+							<select class="form-control" id="tagNames" name="fcty_nu" value="용인1">
+
+							</select>
+							<p>날짜 시간 선택</p>
+							<div class='col-md-3 col-xs-4'>
+								<div class="form-group">
+									<div class="input-group date dateTimePicker" id="datetimepicker1" data-target-input="nearest">
+										<input type="text" class="form-control datetimepicker-input" id="dateTimeValue" data-target="#datetimepicker1">
+										<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+											<div class="input-group-text">
+												<i class="fa fa-calendar"></i>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+			</div>
+			<div class='col-md-3 col-xs-4'>
+				<button type="submit" class="save btn btn-default" id="getTagList" onclick="valuesend()">테그 조회</button>
+			</div>
+			<div class="row" style="margin-top:10px;">
+				<div style="width:1600px; height:800px; overflow-x:scroll;white-space:nowrap;border-collapse:collapse">
+					<table class="table" style="white-space:nowrap;border-collapse:collapse">
+						<thead>
+							<tr>
+								<th width="5">ProjNodeID</th>
+								<th width="50">테그명</th>
+								<th width="50">날자</th>
+								<th width="80">MaxValue</th>
+								<th width="80">AvgValue</th>
+								<th width="80">MinValue</th>
+								<th width="80">LastValue</th>
+							</tr>
+						</thead>
+						<tbody id="maketbody">
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="/static/assets/js/jquery.min.js"></script>
+			<script src="/static/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/static/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/static/assets/js/browser.min.js"></script>
+			<script src="/static/assets/js/breakpoints.min.js"></script>
+			<script src="/static/assets/js/util.js"></script>
+			<script src="/static/assets/js/main.js"></script>
+
+	</body>
+</html>

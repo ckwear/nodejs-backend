@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Hyperspace by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/assets/css/main.css" />
+		<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script>
+var timerID;
+$(document).ready(function(){
+	// e.preventDefault();
+	updateData();
+});
+function updateData(){
+	var fruitArray = [];
+	//미세먼지
+	fruitArray.push("VT_dist02_PM25*02S");
+	fruitArray.push("VT_dist02_PM10*02S");
+	//온습도 정보
+	fruitArray.push("VT_temper01_습도보정");
+	fruitArray.push("VT_temper01_온도보정");
+	fruitArray.push("VT_temper01_노점온도");
+	fruitArray.push("VT_temper01_현재습도");
+	fruitArray.push("VT_temper01_현재온도");
+	//이산화탄소
+	fruitArray.push("VT_CO203_상대습도");
+	fruitArray.push("VT_CO203_온도");
+	fruitArray.push("VT_CO203_이산화탄소");
+	//일산화탄소
+	fruitArray.push("VT_CO04_상대습도");
+	fruitArray.push("VT_CO04_온도");
+	fruitArray.push("VT_CO04_일산화탄소");
+	// alert(fruitArray)
+
+	$.ajax({
+		url: "/webAccess",
+		type: "POST",
+		// headers: {
+		// 	'Authorization' : 'Basic' + btoa("admin" + ":" + "vetec2")
+		// },
+		dataType: "json",
+		data: JSON.stringify(fruitArray),
+   		contentType: "application/json; charset=utf-8",
+		success: function (result) {
+			var append_tag = "";
+			var tags_inf = [];
+			var a = 0;
+			var b = 0;
+			var c = 0;
+			var d = 0;
+			for (value in result.Values) {
+
+				var tagName = result.Values[value].Name;
+				var tagValue = result.Values[value].Value;
+				var dist_device_ch = $('#dist_device').children('p');
+				if (tagName.indexOf("VT_dist") > -1) {
+					dist_device_ch[a].textContent = tagName + " : " + tagValue;
+					// alert(a)
+					// dist_device_ch[1].textContent = tagValue;
+					// $('#dist_device').append("<p>" + tagName + " : " + "</p>")
+					// $('#dist_device').append("<p>" + tagValue + "</p>")
+					a++;
+
+				}
+
+				var temper_device = $('#temper_device').children('p');
+				if (tagName.indexOf("VT_temper") > -1) {
+					temper_device[b].textContent = tagName + " : " + tagValue;
+					// $('#temper_device').append("<p>" + tagName + " : "+ "</p>")
+					// $('#temper_device').append("<p>" + tagValue + "</p>")
+					b++;
+				}
+				var co2_device = $('#co2_device').children('p');
+
+				if (tagName.indexOf("VT_CO203") > -1) {
+					co2_device[c].textContent = tagName + " : " + tagValue;
+					c++;
+				}
+
+				var co_device = $('#co_device').children('p');
+				if (tagName.indexOf("VT_CO04") > -1) {
+					co_device[d].textContent = tagName + " : " + tagValue;
+					d++;
+				}
+
+			}
+
+		},
+		error: function (request, status, error) {
+                alert("code:" + request.status + "\n" + "error:" + error);
+		}
+	})
+	timerID = setTimeout("updateData()", 2000); // 2초 단위로 갱신 처리
+}
+
+
+
+
+		</script>
+	</head>
+	<body class="is-preload">
+
+
+		<div id="wrapper">
+
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner" id="dust_device">
+							<h1>Hyperspace</h1>
+							<p>Just another fine responsive site template designed by <a href="http://html5up.net">HTML5 UP</a><br />
+							and released for free under the <a href="http://html5up.net/license">Creative Commons</a>.</p>
+						</div>
+					</section>
+
+				<!-- One -->
+					<section id="one" class="wrapper style2 spotlights">
+						<section>
+							<a href="#" class="image"><img src="/static/images/pic01.jpg" alt="" data-position="center center" /></a>
+							<div class="content">
+								<div class="inner" id="dist_device">
+									<h2>미세먼지</h2>
+									<p></p>
+									<p></p>
+								</div>
+							</div>
+						</section>
+						<section>
+							<a href="#" class="image"><img src="/static/images/pic02.jpg" alt="" data-position="top center" /></a>
+							<div class="content">
+								<div class="inner" id="co2_device">
+									<h2>이산화탄소</h2>
+									<p></p>
+									<p></p>
+									<p></p>
+								</div>
+							</div>
+						</section>
+						<section>
+							<a href="#" class="image"><img src="/static/images/pic03.jpg" alt="" data-position="25% 25%" /></a>
+							<div class="content">
+								<div class="inner" id="co_device">
+									<h2>일산화 탄소</h2>
+									<p></p>
+									<p></p>
+									<p></p>
+								</div>
+							</div>
+						</section>
+						<section>
+							<a href="#" class="image"><img src="/static/images/pic03.jpg" alt="" data-position="25% 25%" /></a>
+							<div class="content">
+								<div class="inner" id="temper_device">
+									<h2>온습도</h2>
+									<p></p>
+									<p></p>
+									<p></p>
+									<p></p>
+									<p></p>
+								</div>
+							</div>
+						</section>
+					</section>
+
+				<!-- Two -->
+
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<!-- <script src="assets/js/jquery.min.js"></script> -->
+			<script src="/static/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/static/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/static/assets/js/browser.min.js"></script>
+			<script src="/static/assets/js/breakpoints.min.js"></script>
+			<script src="/static/assets/js/util.js"></script>
+			<script src="/static/assets/js/main.js"></script>
+
+	</body>
+</html>
